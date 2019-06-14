@@ -1,0 +1,19 @@
+{
+  "name": "cordova-chromecast-plugin",
+  "version": "1.0.0",
+  "description": "Cordova Chromecast Plugin",
+  "cordova": {
+    "id": "cordova-chromecast-plugin",
+    "platforms": [
+      "android"
+    ]
+  },
+  "keywords": [
+    "cordova",
+    "chromecast",
+    "ecosystem:cordova",
+    "cordova-android"
+  ],
+  "author": "Simbiosys",
+  "license": "Apache 2.0"
+}
