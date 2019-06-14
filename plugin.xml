@@ -21,6 +21,11 @@
     </config-file>
 
     <source-file src="src/android/ChromecastPlugin.java" target-dir="src/es/simbiosys/cordova/plugin/chromecast" />
+
+    <!-- android dependencies -->
+    <framework src="com.android.support:appcompat-v7:27.1.1" />
+    <framework src="com.android.support:mediarouter-v7:27.1.1" />
+    <framework src="com.google.android.gms:play-services-cast-framework:15.0.0" />
   </platform>
 
   <!-- ios -->
