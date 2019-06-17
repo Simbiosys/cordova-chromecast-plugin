@@ -8,4 +8,10 @@ ChromecastPlugin.prototype.echo = function (msg, callback) {
   }, 'ChromecastPlugin', 'echo', [msg])
 }
 
+ChromecastPlugin.prototype.castBtnClick = function (callback) {
+  cordova.exec(callback, function (err) {
+    callback(err)
+  }, 'ChromecastPlugin', 'castBtnClick', [])
+}
+
 module.exports = new ChromecastPlugin()
