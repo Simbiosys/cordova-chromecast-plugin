@@ -1,15 +1,21 @@
 const cordova = require('cordova')
+const exec = require('cordova/exec')
+const channel = require('cordova/channel')
 
 function ChromecastPlugin () {}
 
-ChromecastPlugin.prototype.echo = function (msg, callback) {
-  cordova.exec(callback, function (err) {
-    callback(err)
-  }, 'ChromecastPlugin', 'echo', [msg])
-}
+// Subscribe to native code events on plugin initialization
+channel.onCordovaReady.subscribe(function () {
+  // Send an 'exec' to native code
+  exec(function (event) {
+    cordova.fireDocumentEvent(event)
+  }, function (e) {
+    console.log('Error subscribing to cast session events')
+  }, 'ChromecastPlugin', 'subscribeToSessionEvents', [])
+})
 
 ChromecastPlugin.prototype.castBtnClick = function (callback) {
-  cordova.exec(callback, function (err) {
+  exec(callback, function (err) {
     callback(err)
   }, 'ChromecastPlugin', 'castBtnClick', [])
 }
