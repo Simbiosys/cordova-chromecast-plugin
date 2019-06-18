@@ -1,6 +1,6 @@
 package es.simbiosys.cordova.plugin.chromecast;
 
-import android.support.v7.app.MediaRouteButton;
+import android.support.v7.app.MediaRouteChooserDialog;
 import android.support.v7.media.MediaRouteSelector;
 
 import org.apache.cordova.CordovaPlugin;
@@ -10,15 +10,15 @@ import org.apache.cordova.CordovaWebView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import com.google.android.gms.cast.framework.CastContext;
-import com.google.android.gms.cast.framework.CastButtonFactory;
+
+import es.simbiosys.cordova.plugin.R;
 
 public class ChromecastPlugin extends CordovaPlugin {
 
   private CastContext castContext;
-  private MediaRouteButton castButton;
+  private MediaRouteChooserDialog castDialog;
 
   @Override
   public void initialize(CordovaInterface cordova, CordovaWebView webView) {
@@ -26,7 +26,9 @@ public class ChromecastPlugin extends CordovaPlugin {
       
       // Initialize chromecast plugin
       castContext = CastContext.getSharedInstance(cordova.getActivity().getApplicationContext());
-      CastButtonFactory.setUpMediaRouteButton(cordova.getActivity().getApplicationContext(), castButton);
+      MediaRouteSelector selector = castContext.getMergedSelector();
+      castDialog = new MediaRouteChooserDialog(cordova.getContext(), R.style.Theme_AppCompat_Dialog);
+      castDialog.setRouteSelector(selector);
   }
 
   @Override
@@ -55,15 +57,14 @@ public class ChromecastPlugin extends CordovaPlugin {
     try {
       cordova.getActivity().runOnUiThread(new Runnable() {
         public void run() {
-            MediaRouteSelector selector = castContext.getMergedSelector();
-            callbackContext.success(selector.toString()); // Thread-safe.
+            if (!castDialog.isShowing()) {
+              castDialog.show();
+              callbackContext.success("show cast dialog");
+            } else {
+              callbackContext.success("cast dialog already showing");
+            }
         }
       });
-      /* if (castButton.performClick()) {
-        callbackContext.success("performClick OK");
-      } else {
-        callbackContext.error("performClick KO");
-      } */
     } catch (Exception e) {
       callbackContext.error("Error: " + e.getMessage());
     }
