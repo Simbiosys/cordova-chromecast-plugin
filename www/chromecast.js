@@ -20,4 +20,10 @@ ChromecastPlugin.prototype.castBtnClick = function (callback) {
   }, 'ChromecastPlugin', 'castBtnClick', [])
 }
 
+ChromecastPlugin.prototype.loadRemoteMedia = function (url, contentType, position = 0, autoPlay = true, callback) {
+  exec(callback, function (err) {
+    callback(err)
+  }, 'ChromecastPlugin', 'loadRemoteMedia', [url, contentType, position, autoPlay])
+}
+
 module.exports = new ChromecastPlugin()

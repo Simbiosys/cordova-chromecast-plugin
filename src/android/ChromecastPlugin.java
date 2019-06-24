@@ -12,9 +12,12 @@ import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import com.google.android.gms.cast.MediaInfo;
+import com.google.android.gms.cast.MediaLoadOptions;
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastSession;
 import com.google.android.gms.cast.framework.SessionManagerListener;
+import com.google.android.gms.cast.framework.media.RemoteMediaClient;
 
 import es.simbiosys.cordova.plugin.R;
 
@@ -56,10 +59,15 @@ public class ChromecastPlugin extends CordovaPlugin {
       callbackContext.sendPluginResult(pluginResult);
 
       return true;
-    }
-    if (action.equals("castBtnClick")) {
+    } else if (action.equals("castBtnClick")) {
       this.castBtnClick(callbackContext);
       return true;
+    } else if (action.equals("loadRemoteMedia")) {
+      String url = args.optString(0);
+      String contentType = args.optString(1);
+      int position = args.optInt(2);
+      boolean autoPlay = args.optBoolean(3);
+      this.loadRemoteMedia(callbackContext, url, contentType, position, autoPlay);
     }
 
     return false;
@@ -68,47 +76,48 @@ public class ChromecastPlugin extends CordovaPlugin {
   private void setupCastListener() {
     this.sessionManagerListener = new SessionManagerListener<CastSession>() {
       @Override
-      public void onSessionStarting(CastSession castSession) {
+      public void onSessionStarting(CastSession session) {
         sendSessionEvent("onSessionStarting");
       }
 
       @Override
-      public void onSessionStarted(CastSession castSession, String s) {
+      public void onSessionStarted(CastSession session, String s) {
+        castSession = session;
         sendSessionEvent("onSessionStarted");
       }
 
       @Override
-      public void onSessionStartFailed(CastSession castSession, int i) {
+      public void onSessionStartFailed(CastSession session, int i) {
         sendSessionEvent("onSessionStartFailed");
       }
 
       @Override
-      public void onSessionEnding(CastSession castSession) {
+      public void onSessionEnding(CastSession session) {
         sendSessionEvent("onSessionEnding");
       }
 
       @Override
-      public void onSessionEnded(CastSession castSession, int i) {
+      public void onSessionEnded(CastSession session, int i) {
         sendSessionEvent("onSessionEnded");
       }
 
       @Override
-      public void onSessionResuming(CastSession castSession, String s) {
+      public void onSessionResuming(CastSession session, String s) {
         sendSessionEvent("onSessionResuming");
       }
 
       @Override
-      public void onSessionResumed(CastSession castSession, boolean b) {
+      public void onSessionResumed(CastSession session, boolean b) {
         sendSessionEvent("onSessionResumed");
       }
 
       @Override
-      public void onSessionResumeFailed(CastSession castSession, int i) {
+      public void onSessionResumeFailed(CastSession session, int i) {
         sendSessionEvent("onSessionResumeFailed");
       }
 
       @Override
-      public void onSessionSuspended(CastSession castSession, int i) {
+      public void onSessionSuspended(CastSession session, int i) {
         sendSessionEvent("onSessionSuspended");
       }
     };
@@ -139,5 +148,39 @@ public class ChromecastPlugin extends CordovaPlugin {
     } catch (Exception e) {
       callbackContext.error("Error: " + e.getMessage());
     }
+  }
+
+  private void loadRemoteMedia(CallbackContext callbackContext, String url, String contentType, int position, boolean autoPlay) {
+    if (castSession == null) {
+      callbackContext.error("No cast session active");
+      return;
+    }
+
+    try {
+      cordova.getActivity().runOnUiThread(new Runnable() {
+        public void run() {
+          RemoteMediaClient remoteMediaClient = castSession.getRemoteMediaClient();
+          if (remoteMediaClient == null) {
+            callbackContext.error("No remote media client");
+            return;
+          }
+          remoteMediaClient.load(buildMediaInfo(url, contentType),
+                  new MediaLoadOptions.Builder()
+                          .setAutoplay(autoPlay)
+                          .setPlayPosition(position).build());
+          callbackContext.success("Media loaded successfully");
+        }
+      });
+    } catch (Exception e) {
+      callbackContext.error("Error: " + e.getMessage());
+    }
+  }
+
+  private MediaInfo buildMediaInfo(String url, String contentType) {
+    return new MediaInfo.Builder(url)
+            .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
+            .setContentType(contentType)
+            .build();
+
   }
 }
