@@ -69,7 +69,7 @@ public class ChromecastPlugin extends CordovaPlugin {
     this.sessionManagerListener = new SessionManagerListener<CastSession>() {
       @Override
       public void onSessionStarting(CastSession castSession) {
-
+        sendSessionEvent("onSessionStarting");
       }
 
       @Override
@@ -79,37 +79,37 @@ public class ChromecastPlugin extends CordovaPlugin {
 
       @Override
       public void onSessionStartFailed(CastSession castSession, int i) {
-
+        sendSessionEvent("onSessionStartFailed");
       }
 
       @Override
       public void onSessionEnding(CastSession castSession) {
-
+        sendSessionEvent("onSessionEnding");
       }
 
       @Override
       public void onSessionEnded(CastSession castSession, int i) {
-
+        sendSessionEvent("onSessionEnded");
       }
 
       @Override
       public void onSessionResuming(CastSession castSession, String s) {
-
+        sendSessionEvent("onSessionResuming");
       }
 
       @Override
       public void onSessionResumed(CastSession castSession, boolean b) {
-
+        sendSessionEvent("onSessionResumed");
       }
 
       @Override
       public void onSessionResumeFailed(CastSession castSession, int i) {
-
+        sendSessionEvent("onSessionResumeFailed");
       }
 
       @Override
       public void onSessionSuspended(CastSession castSession, int i) {
-
+        sendSessionEvent("onSessionSuspended");
       }
     };
 
