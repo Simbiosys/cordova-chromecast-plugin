@@ -1,5 +1,6 @@
 package es.simbiosys.cordova.plugin.chromecast;
 
+import android.provider.MediaStore;
 import android.support.v7.app.MediaRouteChooserDialog;
 import android.support.v7.media.MediaRouteSelector;
 
@@ -68,6 +69,7 @@ public class ChromecastPlugin extends CordovaPlugin {
       int position = args.optInt(2);
       boolean autoPlay = args.optBoolean(3);
       this.loadRemoteMedia(callbackContext, url, contentType, position, autoPlay);
+      return true;
     }
 
     return false;
