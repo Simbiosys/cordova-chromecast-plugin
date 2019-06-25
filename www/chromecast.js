@@ -26,4 +26,28 @@ ChromecastPlugin.prototype.loadRemoteMedia = function (url, streamType, contentT
   }, 'ChromecastPlugin', 'loadRemoteMedia', [url, streamType, contentType, position, autoPlay])
 }
 
+ChromecastPlugin.prototype.play = function (callback) {
+  exec(callback, function (err) {
+    callback(err)
+  }, 'ChromecastPlugin', 'play', [])
+}
+
+ChromecastPlugin.prototype.pause = function (callback) {
+  exec(callback, function (err) {
+    callback(err)
+  }, 'ChromecastPlugin', 'pause', [])
+}
+
+ChromecastPlugin.prototype.stop = function (callback) {
+  exec(callback, function (err) {
+    callback(err)
+  }, 'ChromecastPlugin', 'stop', [])
+}
+
+ChromecastPlugin.prototype.endCurrentSession = function (callback) {
+  exec(callback, function (err) {
+    callback(err)
+  }, 'ChromecastPlugin', 'endCurrentSession', [])
+}
+
 module.exports = new ChromecastPlugin()

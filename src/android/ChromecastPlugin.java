@@ -85,7 +85,18 @@ public class ChromecastPlugin extends CordovaPlugin {
       int position = args.optInt(3);
       boolean autoPlay = args.optBoolean(4);
       this.loadRemoteMedia(callbackContext, url, streamType, contentType, position, autoPlay);
-
+      return true;
+    } else if (action.equals("play")) {
+      this.play(callbackContext);
+      return true;
+    } else if (action.equals("pause")) {
+      this.pause(callbackContext);
+      return true;
+    } else if (action.equals("stop")) {
+      this.stop(callbackContext);
+      return true;
+    } else if (action.equals("endCurrentSession")) {
+      this.endCurrentSession(callbackContext);
       return true;
     }
 
@@ -213,7 +224,7 @@ public class ChromecastPlugin extends CordovaPlugin {
         }
       });
     } catch (Exception e) {
-      callbackContext.error("Error: " + e.getMessage());
+      resultCallbackContext.error("Error: " + e.getMessage());
     }
   }
 
@@ -233,5 +244,111 @@ public class ChromecastPlugin extends CordovaPlugin {
             .setStreamType(streamType)
             .setContentType(contentType)
             .build();
+  }
+
+  private void play(CallbackContext callbackContext) {
+    // Set result callback context
+    resultCallbackContext = callbackContext;
+
+    if (castSession == null) {
+      resultCallbackContext.error("No cast session active");
+      return;
+    }
+
+    try {
+      cordova.getActivity().runOnUiThread(new Runnable() {
+        public void run() {
+          RemoteMediaClient remoteMediaClient = castSession.getRemoteMediaClient();
+          if (remoteMediaClient == null) {
+            resultCallbackContext.error("No remote media client");
+            return;
+          }
+
+          if (remoteMediaClient.isPlaying()) {
+            resultCallbackContext.error("Media is already playing");
+            return;
+          }
+
+          remoteMediaClient.play().setResultCallback(resultCallback);
+        }
+      });
+    }  catch (Exception e) {
+      resultCallbackContext.error("Error: " + e.getMessage());
+    }
+  }
+
+  private void pause(CallbackContext callbackContext) {
+    // Set result callback context
+    resultCallbackContext = callbackContext;
+
+    if (castSession == null) {
+      resultCallbackContext.error("No cast session active");
+      return;
+    }
+
+    try {
+      cordova.getActivity().runOnUiThread(new Runnable() {
+        public void run() {
+          RemoteMediaClient remoteMediaClient = castSession.getRemoteMediaClient();
+          if (remoteMediaClient == null) {
+            resultCallbackContext.error("No remote media client");
+            return;
+          }
+
+          if (remoteMediaClient.isPaused()) {
+            resultCallbackContext.error("Media is already paused");
+            return;
+          }
+
+          remoteMediaClient.pause().setResultCallback(resultCallback);
+        }
+      });
+    }  catch (Exception e) {
+      resultCallbackContext.error("Error: " + e.getMessage());
+    }
+  }
+
+  private void stop(CallbackContext callbackContext) {
+    // Set result callback context
+    resultCallbackContext = callbackContext;
+
+    if (castSession == null) {
+      resultCallbackContext.error("No cast session active");
+      return;
+    }
+
+    try {
+      cordova.getActivity().runOnUiThread(new Runnable() {
+        public void run() {
+          RemoteMediaClient remoteMediaClient = castSession.getRemoteMediaClient();
+          if (remoteMediaClient == null) {
+            resultCallbackContext.error("No remote media client");
+            return;
+          }
+
+          remoteMediaClient.stop().setResultCallback(resultCallback);
+        }
+      });
+    }  catch (Exception e) {
+      resultCallbackContext.error("Error: " + e.getMessage());
+    }
+  }
+
+  private void endCurrentSession(CallbackContext callbackContext) {
+    if (castContext == null) {
+      callbackContext.error("No cast context");
+      return;
+    }
+
+    try {
+      cordova.getActivity().runOnUiThread(new Runnable() {
+        public void run() {
+          castContext.getSessionManager().endCurrentSession(true);
+          callbackContext.success("End current session");
+        }
+      });
+    } catch (Exception e) {
+      callbackContext.error("Error: " + e.getMessage());
+    }
   }
 }
