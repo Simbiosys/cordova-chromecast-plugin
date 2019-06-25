@@ -1,8 +1,10 @@
 package es.simbiosys.cordova.plugin.chromecast;
 
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v7.app.MediaRouteChooserDialog;
 import android.support.v7.media.MediaRouteSelector;
+import android.util.Log;
 
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CallbackContext;
@@ -12,6 +14,7 @@ import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaLoadOptions;
@@ -19,10 +22,15 @@ import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastSession;
 import com.google.android.gms.cast.framework.SessionManagerListener;
 import com.google.android.gms.cast.framework.media.RemoteMediaClient;
+import com.google.android.gms.common.api.ResultCallback;
+
+import java.util.Arrays;
 
 import es.simbiosys.cordova.plugin.R;
 
 public class ChromecastPlugin extends CordovaPlugin {
+
+  private static final String TAG = "ChromecastPlugin";
 
   private CastContext castContext;
   private MediaRouteChooserDialog castDialog;
@@ -30,6 +38,7 @@ public class ChromecastPlugin extends CordovaPlugin {
   private SessionManagerListener<CastSession> sessionManagerListener;
 
   private CallbackContext sessionEventsCallbackContext;
+  private ResultCallback<RemoteMediaClient.MediaChannelResult> resultCallback;
 
   @Override
   public void initialize(CordovaInterface cordova, CordovaWebView webView) {
@@ -46,6 +55,9 @@ public class ChromecastPlugin extends CordovaPlugin {
 
       // Set up cast events listener
       setupCastListener();
+
+      // Set up result callback listener
+      setupResultCallback();
   }
 
   @Override
@@ -65,10 +77,11 @@ public class ChromecastPlugin extends CordovaPlugin {
       return true;
     } else if (action.equals("loadRemoteMedia")) {
       String url = args.optString(0);
-      String contentType = args.optString(1);
-      int position = args.optInt(2);
-      boolean autoPlay = args.optBoolean(3);
-      this.loadRemoteMedia(callbackContext, url, contentType, position, autoPlay);
+      int streamType = args.optInt(1);
+      String contentType = args.optString(2);
+      int position = args.optInt(3);
+      boolean autoPlay = args.optBoolean(4);
+      this.loadRemoteMedia(callbackContext, url, streamType, contentType, position, autoPlay);
       return true;
     }
 
@@ -127,6 +140,22 @@ public class ChromecastPlugin extends CordovaPlugin {
     this.castContext.getSessionManager().addSessionManagerListener(this.sessionManagerListener, CastSession.class);
   }
 
+  private void setupResultCallback() {
+    this.resultCallback = new ResultCallback<RemoteMediaClient.MediaChannelResult>() {
+      @Override
+      public void onResult(@NonNull RemoteMediaClient.MediaChannelResult mediaChannelResult) {
+        /* PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, mediaChannelResult.getCustomData());
+        pluginResult.setKeepCallback(true);
+        sessionEventsCallbackContext.sendPluginResult(pluginResult); */
+
+        /* JSONObject resultData = mediaChannelResult.getCustomData();
+
+        Log.d(TAG, resultData != null ? mediaChannelResult.getCustomData().toString() : "null"); */
+        Log.d(TAG, mediaChannelResult.getStatus().toString());
+      }
+    };
+  }
+
   private void sendSessionEvent(String eventName) {
     if (sessionEventsCallbackContext != null) {
       PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, eventName);
@@ -152,7 +181,7 @@ public class ChromecastPlugin extends CordovaPlugin {
     }
   }
 
-  private void loadRemoteMedia(CallbackContext callbackContext, String url, String contentType, int position, boolean autoPlay) {
+  private void loadRemoteMedia(CallbackContext callbackContext, String url, int streamType, String contentType, int position, boolean autoPlay) {
     if (castSession == null) {
       callbackContext.error("No cast session active");
       return;
@@ -166,11 +195,12 @@ public class ChromecastPlugin extends CordovaPlugin {
             callbackContext.error("No remote media client");
             return;
           }
-          remoteMediaClient.load(buildMediaInfo(url, contentType),
+          remoteMediaClient.load(buildMediaInfo(url, streamType, contentType),
                   new MediaLoadOptions.Builder()
                           .setAutoplay(autoPlay)
-                          .setPlayPosition(position).build());
-          callbackContext.success("Media loaded successfully");
+                          .setPlayPosition(position).build())
+          .setResultCallback(resultCallback);
+          // callbackContext.success("Load media");
         }
       });
     } catch (Exception e) {
@@ -178,11 +208,21 @@ public class ChromecastPlugin extends CordovaPlugin {
     }
   }
 
-  private MediaInfo buildMediaInfo(String url, String contentType) {
+  private MediaInfo buildMediaInfo(String url, int streamType, String contentType) {
+    int[] streamTypes = new int[]{
+            MediaInfo.STREAM_TYPE_INVALID,
+            MediaInfo.STREAM_TYPE_NONE,
+            MediaInfo.STREAM_TYPE_BUFFERED,
+            MediaInfo.STREAM_TYPE_LIVE
+    };
+
+    if (!Arrays.asList(streamTypes).contains(streamType)) {
+      streamType = MediaInfo.STREAM_TYPE_INVALID;
+    }
+
     return new MediaInfo.Builder(url)
-            .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
+            .setStreamType(streamType)
             .setContentType(contentType)
             .build();
-
   }
 }
