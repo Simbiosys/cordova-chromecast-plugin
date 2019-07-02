@@ -25,8 +25,6 @@ import com.google.android.gms.common.api.Status;
 
 import java.util.Arrays;
 
-import es.simbiosys.cordova.plugin.R;
-
 public class ChromecastPlugin extends CordovaPlugin {
 
   private static final String TAG = "ChromecastPlugin";
@@ -51,7 +49,10 @@ public class ChromecastPlugin extends CordovaPlugin {
       // Initialize cast instance and devices dialog
       this.castContext = CastContext.getSharedInstance(cordova.getActivity().getApplicationContext());
       MediaRouteSelector selector = castContext.getMergedSelector();
-      this.castDialog = new MediaRouteChooserDialog(cordova.getContext(), R.style.Theme_AppCompat_Dialog);
+      this.castDialog = new MediaRouteChooserDialog(
+              cordova.getContext(),
+              cordova.getActivity().getResources().getIdentifier( "Theme_AppCompat_Dialog", "string", cordova.getActivity().getPackageName())
+      );
       this.castDialog.setRouteSelector(selector);
 
       // Set up cast events listener
