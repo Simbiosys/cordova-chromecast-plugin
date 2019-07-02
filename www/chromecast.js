@@ -14,46 +14,32 @@ channel.onCordovaReady.subscribe(function () {
   }, 'ChromecastPlugin', 'subscribeToSessionEvents', [])
 })
 
-ChromecastPlugin.prototype.castBtnClick = function (callback) {
-  exec(callback, function (err) {
-    callback(err)
-  }, 'ChromecastPlugin', 'castBtnClick', [])
+ChromecastPlugin.prototype.castBtnClick = function (successCallback, errorCallback) {
+  exec(successCallback, errorCallback, 'ChromecastPlugin', 'castBtnClick', [])
 }
 
-ChromecastPlugin.prototype.loadRemoteMedia = function (url, streamType, contentType, position = 0, autoPlay = true, callback) {
-  exec(callback, function (err) {
-    callback(err)
-  }, 'ChromecastPlugin', 'loadRemoteMedia', [url, streamType, contentType, position, autoPlay])
+ChromecastPlugin.prototype.loadRemoteMedia = function (url, streamType, contentType, position = 0, autoPlay = true, successCallback, errorCallback) {
+  exec(successCallback, errorCallback, 'ChromecastPlugin', 'loadRemoteMedia', [url, streamType, contentType, position, autoPlay])
 }
 
-ChromecastPlugin.prototype.play = function (callback) {
-  exec(callback, function (err) {
-    callback(err)
-  }, 'ChromecastPlugin', 'play', [])
+ChromecastPlugin.prototype.play = function (successCallback, errorCallback) {
+  exec(successCallback, errorCallback, 'ChromecastPlugin', 'play', [])
 }
 
-ChromecastPlugin.prototype.pause = function (callback) {
-  exec(callback, function (err) {
-    callback(err)
-  }, 'ChromecastPlugin', 'pause', [])
+ChromecastPlugin.prototype.pause = function (successCallback, errorCallback) {
+  exec(successCallback, errorCallback, 'ChromecastPlugin', 'pause', [])
 }
 
-ChromecastPlugin.prototype.stop = function (callback) {
-  exec(callback, function (err) {
-    callback(err)
-  }, 'ChromecastPlugin', 'stop', [])
+ChromecastPlugin.prototype.stop = function (successCallback, errorCallback) {
+  exec(successCallback, errorCallback, 'ChromecastPlugin', 'stop', [])
 }
 
-ChromecastPlugin.prototype.endCurrentSession = function (callback) {
-  exec(callback, function (err) {
-    callback(err)
-  }, 'ChromecastPlugin', 'endCurrentSession', [])
+ChromecastPlugin.prototype.endCurrentSession = function (successCallback, errorCallback) {
+  exec(successCallback, errorCallback, 'ChromecastPlugin', 'endCurrentSession', [])
 }
 
-ChromecastPlugin.prototype.getPlayerState = function (callback) {
-  exec(callback, function (err) {
-    callback(err)
-  }, 'ChromecastPlugin', 'getPlayerState', [])
+ChromecastPlugin.prototype.getPlayerState = function (successCallback, errorCallback) {
+  exec(successCallback, errorCallback, 'ChromecastPlugin', 'getPlayerState', [])
 }
 
 module.exports = new ChromecastPlugin()
