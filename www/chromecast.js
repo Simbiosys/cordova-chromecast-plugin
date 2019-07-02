@@ -14,6 +14,10 @@ channel.onCordovaReady.subscribe(function () {
   }, 'ChromecastPlugin', 'subscribeToSessionEvents', [])
 })
 
+ChromecastPlugin.prototype.getCastState = function (successCallback, errorCallback) {
+  exec(successCallback, errorCallback, 'ChromecastPlugin', 'getCastState', [])
+}
+
 ChromecastPlugin.prototype.castBtnClick = function (successCallback, errorCallback) {
   exec(successCallback, errorCallback, 'ChromecastPlugin', 'castBtnClick', [])
 }

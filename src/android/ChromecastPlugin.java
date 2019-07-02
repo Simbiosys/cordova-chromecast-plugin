@@ -73,6 +73,9 @@ public class ChromecastPlugin extends CordovaPlugin {
       callbackContext.sendPluginResult(pluginResult);
 
       return true;
+    } else if (action.equals("getCastState")) {
+      this.getCastState(callbackContext);
+      return true;
     } else if (action.equals("castBtnClick")) {
       this.castBtnClick(callbackContext);
       return true;
@@ -198,6 +201,23 @@ public class ChromecastPlugin extends CordovaPlugin {
       PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, eventName);
       pluginResult.setKeepCallback(true);
       eventsCallbackContext.sendPluginResult(pluginResult);
+    }
+  }
+
+  private void getCastState(CallbackContext callbackContext) {
+    if (castContext == null) {
+      callbackContext.error("No cast context");
+      return;
+    }
+
+    try {
+      cordova.getActivity().runOnUiThread(new Runnable() {
+        public void run() {
+          callbackContext.success(castContext.getCastState());
+        }
+      });
+    } catch (Exception e) {
+      callbackContext.error("Error: " + e.getMessage());
     }
   }
 
