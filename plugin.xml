@@ -31,9 +31,6 @@
     <source-file src="src/android/ChromecastPlugin.java" target-dir="src/es/simbiosys/cordova/plugin/chromecast" />
     <source-file src="src/android/CastOptionsProvider.java" target-dir="src/es/simbiosys/cordova/plugin/chromecast" />
 
-    <!-- Resources -->
-    <resource-file src="src/android/pluginStrings.xml" target="res/values/pluginStrings.xml" />
-
     <!-- android dependencies -->
     <framework src="com.android.support:appcompat-v7:27.1.1" />
     <framework src="com.android.support:mediarouter-v7:27.1.1" />

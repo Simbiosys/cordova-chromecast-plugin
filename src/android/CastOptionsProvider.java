@@ -8,15 +8,15 @@ import android.content.Context;
 
 import java.util.List;
 
-import es.simbiosys.cordova.plugin.R;
-
 public class CastOptionsProvider implements OptionsProvider {
+
+    private String appId = "CC1AD845"; // Default Chromecast receiver application ID
 
     @Override
     public CastOptions getCastOptions(Context context) {
         return new CastOptions.Builder()
-            .setReceiverApplicationId(context.getString(R.string.app_id))
-            .build();
+                .setReceiverApplicationId(appId)
+                .build();
     }
 
     @Override
