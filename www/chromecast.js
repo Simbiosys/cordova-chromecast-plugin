@@ -2,7 +2,25 @@ const cordova = require('cordova')
 const exec = require('cordova/exec')
 const channel = require('cordova/channel')
 
-function ChromecastPlugin () {}
+function ChromecastPlugin () {
+  this.streamTypes = {
+    STREAM_TYPE_INVALID: -1,
+    STREAM_TYPE_NONE: 0,
+    STREAM_TYPE_BUFFERED: 1,
+    STREAM_TYPE_LIVE: 2
+  }
+  this.castStates = {
+    NO_DEVICES_AVAILABLE: 1,
+    NOT_CONNECTED: 2,
+    CONNECTING: 3,
+    CONNECTED: 4
+  }
+  this.playerStates = {
+    STOPPED: 1,
+    PLAYING: 2,
+    PAUSED: 3
+  }
+}
 
 // Subscribe to native code events on plugin initialization
 channel.onCordovaReady.subscribe(function () {
@@ -13,6 +31,18 @@ channel.onCordovaReady.subscribe(function () {
     console.log('Error subscribing to cast session events')
   }, 'ChromecastPlugin', 'subscribeToSessionEvents', [])
 })
+
+ChromecastPlugin.prototype.getStreamTypes = function () {
+  return this.streamTypes
+}
+
+ChromecastPlugin.prototype.getCastStates = function () {
+  return this.castStates
+}
+
+ChromecastPlugin.prototype.getPlayerStates = function () {
+  return this.playerStates
+}
 
 ChromecastPlugin.prototype.getCastState = function (successCallback, errorCallback) {
   exec(successCallback, errorCallback, 'ChromecastPlugin', 'getCastState', [])
