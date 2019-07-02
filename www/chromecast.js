@@ -50,4 +50,10 @@ ChromecastPlugin.prototype.endCurrentSession = function (callback) {
   }, 'ChromecastPlugin', 'endCurrentSession', [])
 }
 
+ChromecastPlugin.prototype.getPlayerState = function (callback) {
+  exec(callback, function (err) {
+    callback(err)
+  }, 'ChromecastPlugin', 'getPlayerState', [])
+}
+
 module.exports = new ChromecastPlugin()

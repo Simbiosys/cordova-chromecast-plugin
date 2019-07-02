@@ -96,6 +96,9 @@ public class ChromecastPlugin extends CordovaPlugin {
     } else if (action.equals("endCurrentSession")) {
       this.endCurrentSession(callbackContext);
       return true;
+    } else if (action.equals("getPlayerState")) {
+      this.getPlayerState(callbackContext);
+      return true;
     }
 
     return false;
@@ -163,7 +166,7 @@ public class ChromecastPlugin extends CordovaPlugin {
       @Override
       public void onSessionSuspended(CastSession session, int i) {
         Log.d(TAG, "onSessionSuspended");
-        
+
         triggerJsEvent("onSessionSuspended");
       }
     };
@@ -361,6 +364,31 @@ public class ChromecastPlugin extends CordovaPlugin {
         public void run() {
           castContext.getSessionManager().endCurrentSession(true);
           callbackContext.success("End current session");
+        }
+      });
+    } catch (Exception e) {
+      callbackContext.error("Error: " + e.getMessage());
+    }
+  }
+
+  private void getPlayerState(CallbackContext callbackContext) {
+    if (castContext == null) {
+      callbackContext.error("No cast context");
+      return;
+    }
+
+    try {
+      cordova.getActivity().runOnUiThread(new Runnable() {
+        public void run() {
+          RemoteMediaClient remoteMediaClient = castSession.getRemoteMediaClient();
+          if (remoteMediaClient == null) {
+            callbackContext.error("No remote media client");
+            return;
+          }
+
+          int playerState = remoteMediaClient.getPlayerState();
+          Log.d(TAG, "player state: " + playerState);
+          callbackContext.success(playerState);
         }
       });
     } catch (Exception e) {
