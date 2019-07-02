@@ -386,9 +386,7 @@ public class ChromecastPlugin extends CordovaPlugin {
             return;
           }
 
-          int playerState = remoteMediaClient.getPlayerState();
-          Log.d(TAG, "player state: " + playerState);
-          callbackContext.success(playerState);
+          callbackContext.success(remoteMediaClient.getPlayerState());
         }
       });
     } catch (Exception e) {
