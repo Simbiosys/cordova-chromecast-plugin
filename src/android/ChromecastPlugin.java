@@ -1,6 +1,5 @@
 package es.simbiosys.cordova.plugin.chromecast;
 
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.MediaRouteChooserDialog;
 import android.support.v7.media.MediaRouteSelector;
@@ -14,7 +13,6 @@ import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaLoadOptions;
@@ -107,47 +105,65 @@ public class ChromecastPlugin extends CordovaPlugin {
     this.sessionManagerListener = new SessionManagerListener<CastSession>() {
       @Override
       public void onSessionStarting(CastSession session) {
+        Log.d(TAG, "onSessionStarting");
+
         triggerJsEvent("onSessionStarting");
       }
 
       @Override
       public void onSessionStarted(CastSession session, String s) {
+        Log.d(TAG, "onSessionStarted");
+
         castSession = session;
         triggerJsEvent("onSessionStarted");
       }
 
       @Override
       public void onSessionStartFailed(CastSession session, int i) {
+        Log.d(TAG, "onSessionStartFailed");
+
         triggerJsEvent("onSessionStartFailed");
       }
 
       @Override
       public void onSessionEnding(CastSession session) {
+        Log.d(TAG, "onSessionEnding");
+
         triggerJsEvent("onSessionEnding");
       }
 
       @Override
       public void onSessionEnded(CastSession session, int i) {
+        Log.d(TAG, "onSessionEnded");
+
         triggerJsEvent("onSessionEnded");
       }
 
       @Override
       public void onSessionResuming(CastSession session, String s) {
+        Log.d(TAG, "onSessionResuming");
+
         triggerJsEvent("onSessionResuming");
       }
 
       @Override
       public void onSessionResumed(CastSession session, boolean b) {
+        Log.d(TAG, "onSessionResumed");
+
         triggerJsEvent("onSessionResumed");
       }
 
       @Override
       public void onSessionResumeFailed(CastSession session, int i) {
+        Log.d(TAG, "onSessionResumeFailed");
+
         triggerJsEvent("onSessionResumeFailed");
       }
 
       @Override
       public void onSessionSuspended(CastSession session, int i) {
+        Log.d(TAG, "onSessionSuspended");
+        
         triggerJsEvent("onSessionSuspended");
       }
     };
