@@ -1,8 +1,8 @@
 package es.simbiosys.cordova.plugin.chromecast;
 
-import android.support.annotation.NonNull;
-import android.support.v7.app.MediaRouteChooserDialog;
-import android.support.v7.media.MediaRouteSelector;
+import androidx.annotation.NonNull;
+import androidx.mediarouter.app.MediaRouteChooserDialog;
+import androidx.mediarouter.media.MediaRouteSelector;
 import android.util.Log;
 
 import org.apache.cordova.CordovaPlugin;
@@ -51,7 +51,7 @@ public class ChromecastPlugin extends CordovaPlugin {
       MediaRouteSelector selector = castContext.getMergedSelector();
       this.castDialog = new MediaRouteChooserDialog(
               cordova.getContext(),
-              cordova.getActivity().getResources().getIdentifier( "Theme_AppCompat_Dialog", "string", cordova.getActivity().getPackageName())
+              androidx.appcompat.R.style.Theme_AppCompat
       );
       this.castDialog.setRouteSelector(selector);
 
