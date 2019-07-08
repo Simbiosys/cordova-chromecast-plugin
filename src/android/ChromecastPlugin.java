@@ -157,6 +157,7 @@ public class ChromecastPlugin extends CordovaPlugin {
       public void onSessionResumed(CastSession session, boolean b) {
         Log.d(TAG, "onSessionResumed");
 
+        castSession = session;
         triggerJsEvent("onSessionResumed");
       }
 
