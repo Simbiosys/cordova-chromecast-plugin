@@ -393,8 +393,8 @@ public class ChromecastPlugin extends CordovaPlugin {
   }
 
   private void getPlayerState(CallbackContext callbackContext) {
-    if (castContext == null) {
-      callbackContext.error("No cast context");
+    if (castSession == null) {
+      callbackContext.error("No session active");
       return;
     }
 
