@@ -68,6 +68,14 @@ ChromecastPlugin.prototype.stop = function (successCallback, errorCallback) {
   exec(successCallback, errorCallback, 'ChromecastPlugin', 'stop', [])
 }
 
+ChromecastPlugin.prototype.stepForward = function (step, successCallback, errorCallback) {
+  exec(successCallback, errorCallback, 'ChromecastPlugin', 'stepForward', [step])
+}
+
+ChromecastPlugin.prototype.stepBackward = function (step, successCallback, errorCallback) {
+  exec(successCallback, errorCallback, 'ChromecastPlugin', 'stepBackward', [step])
+}
+
 ChromecastPlugin.prototype.endCurrentSession = function (successCallback, errorCallback) {
   exec(successCallback, errorCallback, 'ChromecastPlugin', 'endCurrentSession', [])
 }

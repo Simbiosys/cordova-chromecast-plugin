@@ -97,6 +97,14 @@ public class ChromecastPlugin extends CordovaPlugin {
     } else if (action.equals("stop")) {
       this.stop(callbackContext);
       return true;
+    } else if (action.equals("stepForward")) {
+      long step = args.optLong(0);
+      this.stepForward(step, callbackContext);
+      return true;
+    } else if (action.equals("stepBackward")) {
+      long step = args.optLong(0);
+      this.stepBackward(step, callbackContext);
+      return true;
     } else if (action.equals("endCurrentSession")) {
       this.endCurrentSession(callbackContext);
       return true;
@@ -368,6 +376,62 @@ public class ChromecastPlugin extends CordovaPlugin {
           }
 
           remoteMediaClient.stop().setResultCallback(resultCallback);
+        }
+      });
+    }  catch (Exception e) {
+      resultCallbackContext.error("Error: " + e.getMessage());
+    }
+  }
+
+  private void stepForward(long stepInMillis, CallbackContext callbackContext) {
+    // Set result callback context
+    resultCallbackContext = callbackContext;
+
+    if (castSession == null) {
+      resultCallbackContext.error("No cast session active");
+      return;
+    }
+
+    try {
+      cordova.getActivity().runOnUiThread(new Runnable() {
+        public void run() {
+          RemoteMediaClient remoteMediaClient = castSession.getRemoteMediaClient();
+          if (remoteMediaClient == null) {
+            resultCallbackContext.error("No remote media client");
+            return;
+          }
+
+          long currentPosition = remoteMediaClient.getMediaStatus().getStreamPosition();
+          long position = currentPosition + stepInMillis;
+          remoteMediaClient.seek(position).setResultCallback(resultCallback);
+        }
+      });
+    }  catch (Exception e) {
+      resultCallbackContext.error("Error: " + e.getMessage());
+    }
+  }
+
+  private void stepBackward(long stepInMillis, CallbackContext callbackContext) {
+    // Set result callback context
+    resultCallbackContext = callbackContext;
+
+    if (castSession == null) {
+      resultCallbackContext.error("No cast session active");
+      return;
+    }
+
+    try {
+      cordova.getActivity().runOnUiThread(new Runnable() {
+        public void run() {
+          RemoteMediaClient remoteMediaClient = castSession.getRemoteMediaClient();
+          if (remoteMediaClient == null) {
+            resultCallbackContext.error("No remote media client");
+            return;
+          }
+
+          long currentPosition = remoteMediaClient.getMediaStatus().getStreamPosition();
+          long position = currentPosition - stepInMillis;
+          remoteMediaClient.seek(position).setResultCallback(resultCallback);
         }
       });
     }  catch (Exception e) {
