@@ -56,6 +56,10 @@ ChromecastPlugin.prototype.loadRemoteMedia = function (url, streamType, contentT
   exec(successCallback, errorCallback, 'ChromecastPlugin', 'loadRemoteMedia', [url, streamType, contentType, position, autoPlay])
 }
 
+ChromecastPlugin.prototype.loadRemoteMediaQueue = function (urls, streamType, contentType, startIndex, repeatMode, position, successCallback, errorCallback) {
+  exec(successCallback, errorCallback, 'ChromecastPlugin', 'loadRemoteMediaQueue', [urls, streamType, contentType, startIndex, repeatMode, position])
+}
+
 ChromecastPlugin.prototype.play = function (successCallback, errorCallback) {
   exec(successCallback, errorCallback, 'ChromecastPlugin', 'play', [])
 }
@@ -74,6 +78,14 @@ ChromecastPlugin.prototype.stepForward = function (step, successCallback, errorC
 
 ChromecastPlugin.prototype.stepBackward = function (step, successCallback, errorCallback) {
   exec(successCallback, errorCallback, 'ChromecastPlugin', 'stepBackward', [step])
+}
+
+ChromecastPlugin.prototype.forwards = function (successCallback, errorCallback) {
+  exec(successCallback, errorCallback, 'ChromecastPlugin', 'forwards', [])
+}
+
+ChromecastPlugin.prototype.backwards = function (successCallback, errorCallback) {
+  exec(successCallback, errorCallback, 'ChromecastPlugin', 'backwards', [])
 }
 
 ChromecastPlugin.prototype.endCurrentSession = function (successCallback, errorCallback) {

@@ -3,6 +3,7 @@ package es.simbiosys.cordova.plugin.chromecast;
 import androidx.annotation.NonNull;
 import androidx.mediarouter.app.MediaRouteChooserDialog;
 import androidx.mediarouter.media.MediaRouteSelector;
+
 import android.util.Log;
 
 import org.apache.cordova.CordovaPlugin;
@@ -16,6 +17,7 @@ import org.json.JSONException;
 
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaLoadOptions;
+import com.google.android.gms.cast.MediaQueueItem;
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastSession;
 import com.google.android.gms.cast.framework.SessionManagerListener;
@@ -23,7 +25,9 @@ import com.google.android.gms.cast.framework.media.RemoteMediaClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class ChromecastPlugin extends CordovaPlugin {
 
@@ -88,6 +92,15 @@ public class ChromecastPlugin extends CordovaPlugin {
       boolean autoPlay = args.optBoolean(4);
       this.loadRemoteMedia(callbackContext, url, streamType, contentType, position, autoPlay);
       return true;
+    } else if (action.equals("loadRemoteMediaQueue")) {
+      JSONArray urls = args.optJSONArray(0);
+      int streamType = args.optInt(1);
+      String contentType = args.optString(2);
+      int startIndex = args.optInt(3);
+      int repeatMode = args.optInt(4);
+      int position = args.optInt(5);
+      this.loadRemoteMediaQueue(callbackContext, urls, streamType, contentType, startIndex, repeatMode, position);
+      return true;
     } else if (action.equals("play")) {
       this.play(callbackContext);
       return true;
@@ -105,6 +118,10 @@ public class ChromecastPlugin extends CordovaPlugin {
       long step = args.optLong(0);
       this.stepBackward(step, callbackContext);
       return true;
+    } else if (action.equals("forwards")){
+      this.forwards(callbackContext);
+    } else if (action.equals("backwards")) {
+      this.backwards(callbackContext);
     } else if (action.equals("endCurrentSession")) {
       this.endCurrentSession(callbackContext);
       return true;
@@ -277,6 +294,51 @@ public class ChromecastPlugin extends CordovaPlugin {
     }
   }
 
+  private void loadRemoteMediaQueue(CallbackContext callbackContext, JSONArray urls, int streamType, String contentType, int startIndex, int repeatMode, int position) {
+    // Set result callback context
+    resultCallbackContext = callbackContext;
+
+    if (castSession == null) {
+      resultCallbackContext.error("No cast session active");
+      return;
+    }
+
+    try {
+      cordova.getActivity().runOnUiThread(new Runnable() {
+        public void run() {
+          RemoteMediaClient remoteMediaClient = castSession.getRemoteMediaClient();
+          if (remoteMediaClient == null) {
+            resultCallbackContext.error("No remote media client");
+            return;
+          }
+
+          // Create MediaQueueItem[] from urls parameter
+          List<MediaQueueItem> queueItemsList = new ArrayList<MediaQueueItem>();
+          for (int i=0; i<urls.length(); i++) {
+            String url = urls.optString(i);
+            MediaQueueItem item = new MediaQueueItem.Builder(
+                    buildMediaInfo(url, streamType, contentType)
+            ).build();
+            queueItemsList.add(item);
+          }
+          MediaQueueItem[] queueItems = new MediaQueueItem[queueItemsList.size()];
+          queueItems = queueItemsList.toArray(queueItems);
+
+          // Load queue
+          remoteMediaClient.queueLoad(
+                  queueItems,
+                  startIndex,
+                  repeatMode,
+                  position,
+                  null
+          ).setResultCallback(resultCallback);
+        }
+      });
+    } catch (Exception e) {
+      resultCallbackContext.error("Error: " + e.getMessage());
+    }
+  }
+
   private MediaInfo buildMediaInfo(String url, int streamType, String contentType) {
     int[] streamTypes = new int[]{
             MediaInfo.STREAM_TYPE_INVALID,
@@ -432,6 +494,58 @@ public class ChromecastPlugin extends CordovaPlugin {
           long currentPosition = remoteMediaClient.getMediaStatus().getStreamPosition();
           long position = currentPosition - stepInMillis;
           remoteMediaClient.seek(position).setResultCallback(resultCallback);
+        }
+      });
+    }  catch (Exception e) {
+      resultCallbackContext.error("Error: " + e.getMessage());
+    }
+  }
+
+  private void forwards(CallbackContext callbackContext) {
+    // Set result callback context
+    resultCallbackContext = callbackContext;
+
+    if (castSession == null) {
+      resultCallbackContext.error("No cast session active");
+      return;
+    }
+
+    try {
+      cordova.getActivity().runOnUiThread(new Runnable() {
+        public void run() {
+          RemoteMediaClient remoteMediaClient = castSession.getRemoteMediaClient();
+          if (remoteMediaClient == null) {
+            resultCallbackContext.error("No remote media client");
+            return;
+          }
+
+          remoteMediaClient.queueNext(null).setResultCallback(resultCallback);
+        }
+      });
+    }  catch (Exception e) {
+      resultCallbackContext.error("Error: " + e.getMessage());
+    }
+  }
+
+  private void backwards (CallbackContext callbackContext) {
+    // Set result callback context
+    resultCallbackContext = callbackContext;
+
+    if (castSession == null) {
+      resultCallbackContext.error("No cast session active");
+      return;
+    }
+
+    try {
+      cordova.getActivity().runOnUiThread(new Runnable() {
+        public void run() {
+          RemoteMediaClient remoteMediaClient = castSession.getRemoteMediaClient();
+          if (remoteMediaClient == null) {
+            resultCallbackContext.error("No remote media client");
+            return;
+          }
+
+          remoteMediaClient.queuePrev(null).setResultCallback(resultCallback);
         }
       });
     }  catch (Exception e) {
