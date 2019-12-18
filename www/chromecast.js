@@ -20,6 +20,12 @@ function ChromecastPlugin () {
     PLAYING: 2,
     PAUSED: 3
   }
+  this.repeatModes = {
+    REPEAT_MODE_REPEAT_OFF: 0,
+    REPEAT_MODE_REPEAT_ALL: 1,
+    REPEAT_MODE_REPEAT_SINGLE: 2,
+    REPEAT_MODE_REPEAT_ALL_AND_SHUFFLE: 3
+  }
 }
 
 // Subscribe to native code events on plugin initialization
@@ -42,6 +48,10 @@ ChromecastPlugin.prototype.getCastStates = function () {
 
 ChromecastPlugin.prototype.getPlayerStates = function () {
   return this.playerStates
+}
+
+ChromecastPlugin.prototype.getRepeatModes = function () {
+  return this.repeatModes
 }
 
 ChromecastPlugin.prototype.getCastState = function (successCallback, errorCallback) {
