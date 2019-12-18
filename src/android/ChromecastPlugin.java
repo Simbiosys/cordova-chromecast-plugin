@@ -81,7 +81,10 @@ public class ChromecastPlugin extends CordovaPlugin {
     } else if (action.equals("getCastState")) {
       this.getCastState(callbackContext);
       return true;
-    } else if (action.equals("castBtnClick")) {
+    } else if (action.equals("getCastDeviceFriendlyName")) {
+      this.getCastDeviceFriendlyName(callbackContext);
+      return true;
+    }else if (action.equals("castBtnClick")) {
       this.castBtnClick(callbackContext);
       return true;
     } else if (action.equals("loadRemoteMedia")) {
@@ -241,6 +244,23 @@ public class ChromecastPlugin extends CordovaPlugin {
       cordova.getActivity().runOnUiThread(new Runnable() {
         public void run() {
           callbackContext.success(castContext.getCastState());
+        }
+      });
+    } catch (Exception e) {
+      callbackContext.error("Error: " + e.getMessage());
+    }
+  }
+
+  private void getCastDeviceFriendlyName(CallbackContext callbackContext) {
+    if (castSession == null) {
+      callbackContext.error("No cast session active");
+      return;
+    }
+
+    try {
+      cordova.getActivity().runOnUiThread(new Runnable() {
+        public void run() {
+          callbackContext.success(castSession.getCastDevice().getFriendlyName());
         }
       });
     } catch (Exception e) {

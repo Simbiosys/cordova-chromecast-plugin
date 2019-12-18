@@ -58,6 +58,10 @@ ChromecastPlugin.prototype.getCastState = function (successCallback, errorCallba
   exec(successCallback, errorCallback, 'ChromecastPlugin', 'getCastState', [])
 }
 
+ChromecastPlugin.prototype.getCastDeviceFriendlyName = function (successCallback, errorCallback) {
+  exec(successCallback, errorCallback, 'ChromecastPlugin', 'getCastDeviceFriendlyName', [])
+}
+
 ChromecastPlugin.prototype.castBtnClick = function (successCallback, errorCallback) {
   exec(successCallback, errorCallback, 'ChromecastPlugin', 'castBtnClick', [])
 }
